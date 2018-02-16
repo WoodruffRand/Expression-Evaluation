@@ -23,10 +23,26 @@ public class Expression {
      */
     public static void 
     makeVariableLists(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
-    	/** COMPLETE THIS METHOD **/
-    	/** DO NOT create new vars and arrays - they are already created before being sent in
-    	 ** to this method - you just need to fill them in.
-    	 **/
+    	//TODO make this puppy chooch
+    	Scanner sc = new Scanner(expr);
+    	sc.useDelimiter("\\[|\\]|\\)|\\(|/|\\*|-|\\+");
+    	
+    	
+    	while(sc.hasNext()) {
+    		String v = sc.next();
+    		int index = expr.indexOf(v)+v.length();
+    		char delm = ' ';
+    		if(index <expr.length()-1) delm = expr.charAt(index);
+    		if(delm == '[') {
+    			Variable temp =new Variable();
+    			arrays.add(temp);
+    		}else {
+    			
+    		}
+    		
+    		
+    		
+    	}
     }
     
     /**
