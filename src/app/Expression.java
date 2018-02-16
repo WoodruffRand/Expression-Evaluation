@@ -34,10 +34,11 @@ public class Expression {
     		char delm = ' ';
     		if(index <expr.length()-1) delm = expr.charAt(index);
     		if(delm == '[') {
-    			Variable temp =new Variable();
+    			Array temp =new Array(v);
     			arrays.add(temp);
     		}else {
-    			
+    			Variable temp =new Variable(v);
+    			vars.add(temp);
     		}
     		
     		
