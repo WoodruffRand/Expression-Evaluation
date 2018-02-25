@@ -23,7 +23,6 @@ public class Expression {
      */
     public static void 
     makeVariableLists(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
-    	//TODO make this puppy chooch
     	Scanner sc = new Scanner(expr);
     	sc.useDelimiter("\\[|\\]|\\)|\\(|/|\\*|-|\\+");
     	
@@ -36,25 +35,27 @@ public class Expression {
     		if(delm == '[') {
     			Array temp =new Array(v);
     			arrays.add(temp);
-    		}else if(isNotNumb(v)){
+    		}else if(!isNumber(v)) {
     			Variable temp =new Variable(v);
     			vars.add(temp);
     		}
     		
-    		//TODO build out unit testing 
-    		
     	}
+    	sc.close();
     }
     
-    private static boolean isNotNumb(String v) {
-		for(int i = 0; i< v.length(); i++) {
-			if(v.charAt(i))
-			
-		}
-		return true;
-	}
-
-	/**
+    private static boolean isNumber(String str) {
+    	for( int i = 0; i<str.length(); i++) {
+    		if(str.charAt(i)<'0' || str.charAt(i)>'9') {
+    			 if(str.charAt(i) != '.')return false;
+    		}
+    		
+    	}
+    	return true;
+    }
+    
+    
+    /**
      * Loads values for variables and arrays in the expression
      * 
      * @param sc Scanner for values input
@@ -103,8 +104,45 @@ public class Expression {
      */
     public static float 
     evaluate(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
-    	/** COMPLETE THIS METHOD **/
-    	// following line just a placeholder for compilation
-    	return 0;
+    	// TODO make this dumb thing work
+    	//if(isVar(exp)) return getVar(expr,vars);
+    	//if(isArray) return getArray(expr, arrays);
+    	if(isNumber(expr)) return Integer.parseInt(expr);
+    	String opAndIndex =opAndIndex(expr);
+    	
+    	String currOpp = ""; //substring before comma
+    	if(currOpp.equals("") && expr.charAt(0)=='('&& expr.charAt(expr.length()-1)==')')
+    		return evaluate(expr, vars, arrays); //substring each side by 1
+    	
+    	int oppIndex  = Integer.parseInt("1"); // substring after comma
+    	String lh ="";
+    	String rh = "";
+    	
+    	if(currOpp.equals("*")) return evaluate(lh,vars, arrays)*evaluate(rh,vars, arrays);
+    	if(currOpp.equals("/")) return evaluate(lh,vars, arrays)/evaluate(rh,vars, arrays);
+    	if(currOpp.equals("+")) return evaluate(lh,vars, arrays)+evaluate(rh,vars, arrays);
+    	if(currOpp.equals("-")) return evaluate(lh,vars, arrays)-evaluate(rh,vars, arrays);
+    	 
+    		
+    	return -666;
+    	//return evaluate;
+    }
+    
+    public static String opAndIndex(String exp) {
+    	String rtn ="";
+    	String opps = "*/+-";
+    	
+    	for(int i =0 ; i<opps.length(); i++) {
+    		int depth = 0;
+    		for(int j = 0; j<exp.length(); j++) {
+    			if(exp.charAt(j) == '(' || exp.charAt(j) == '[') depth--;
+    			if(exp.charAt(j) == ')' || exp.charAt(j) == ']') depth++;
+    			
+    			if(depth >0 && exp.charAt(j)== opps.charAt(i) ) return opps.charAt(i)+","+i;
+    			
+    		}
+    	}
+    	return ""; //no unbound opp found
+    	
     }
 }
