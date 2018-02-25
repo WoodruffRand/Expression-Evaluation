@@ -36,7 +36,7 @@ public class Expression {
     		if(delm == '[') {
     			Array temp =new Array(v);
     			arrays.add(temp);
-    		}else {
+    		}else if(isNotNumb(v)){
     			Variable temp =new Variable(v);
     			vars.add(temp);
     		}
@@ -46,7 +46,15 @@ public class Expression {
     	}
     }
     
-    /**
+    private static boolean isNotNumb(String v) {
+		for(int i = 0; i< v.length(); i++) {
+			if(v.charAt(i))
+			
+		}
+		return true;
+	}
+
+	/**
      * Loads values for variables and arrays in the expression
      * 
      * @param sc Scanner for values input
