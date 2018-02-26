@@ -26,11 +26,10 @@ public class Expression {
     	Scanner sc = new Scanner(expr);
     	sc.useDelimiter("\\[|\\]|\\)|\\(|/|\\*|-|\\+");
     	
-    	
     	while(sc.hasNext()) {
     		String v = sc.next();
     		int index = expr.indexOf(v)+v.length();
-    		char delm = ' ';
+    		char delm = '1';
     		if(index <expr.length()-1) delm = expr.charAt(index);
     		if(delm == '[') {
     			Array temp =new Array(v);
@@ -54,6 +53,15 @@ public class Expression {
     	return true;
     }
     
+    public static boolean isVar(String str) {
+    	for(int i = 0; i < str.length(); i++) {
+    		if( !Character.isLetter( str.charAt(i) ) ) {
+    			return false;
+    		}
+    		
+    	}
+    	return true;
+    }
     
     /**
      * Loads values for variables and arrays in the expression
@@ -104,45 +112,96 @@ public class Expression {
      */
     public static float 
     evaluate(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
-    	// TODO make this dumb thing work
-    	//if(isVar(exp)) return getVar(expr,vars);
-    	//if(isArray) return getArray(expr, arrays);
+    	if(isVar(expr)) return getVar(expr,vars);
+    	if(isArray(expr)) return getArray(expr, vars, arrays);
     	if(isNumber(expr)) return Integer.parseInt(expr);
-    	String opAndIndex =opAndIndex(expr);
+    	String opAndIndex =opAndIndex(expr); //opp,index
     	
-    	String currOpp = ""; //substring before comma
-    	if(currOpp.equals("") && expr.charAt(0)=='('&& expr.charAt(expr.length()-1)==')')
-    		return evaluate(expr, vars, arrays); //substring each side by 1
+    	String currOpp = getOpp(opAndIndex); //substring before comma
+    	if(  currOpp.equals("") && (expr.charAt(0)=='(')&& (expr.charAt(expr.length()-1)==')')     )
+    		return evaluate(expr.substring(1,expr.length()-1), vars, arrays); //substring each side by 1
     	
-    	int oppIndex  = Integer.parseInt("1"); // substring after comma
-    	String lh ="";
-    	String rh = "";
+    	int oppIndex  = getIndex(opAndIndex); // substring after comma
+    	String lh = expr.substring(0,oppIndex);
+    	String rh = expr.substring(oppIndex+1,expr.length());
     	
     	if(currOpp.equals("*")) return evaluate(lh,vars, arrays)*evaluate(rh,vars, arrays);
     	if(currOpp.equals("/")) return evaluate(lh,vars, arrays)/evaluate(rh,vars, arrays);
     	if(currOpp.equals("+")) return evaluate(lh,vars, arrays)+evaluate(rh,vars, arrays);
     	if(currOpp.equals("-")) return evaluate(lh,vars, arrays)-evaluate(rh,vars, arrays);
-    	 
-    		
-    	return -666;
-    	//return evaluate;
+    	return -666666666;
     }
-    
+    /**
+     * Searches string expression for lowest order unbound index
+     * if no index found return empty string 
+     * empty string either means no opps present or they are all encapsulated in parentheses 
+     * @param exp The expression to be evaluated as a string
+     * @return "operand,index"
+     */
+    //TODO make this private before submitting
     public static String opAndIndex(String exp) {
-    	String rtn ="";
-    	String opps = "*/+-";
-    	
+    	String rtn =",";
+    	String opps = "+-*/";
     	for(int i =0 ; i<opps.length(); i++) {
     		int depth = 0;
     		for(int j = 0; j<exp.length(); j++) {
     			if(exp.charAt(j) == '(' || exp.charAt(j) == '[') depth--;
     			if(exp.charAt(j) == ')' || exp.charAt(j) == ']') depth++;
-    			
-    			if(depth >0 && exp.charAt(j)== opps.charAt(i) ) return opps.charAt(i)+","+i;
-    			
+    			if(depth >=0 && exp.charAt(j)== opps.charAt(i) ) return opps.charAt(i)+","+j;
     		}
     	}
-    	return ""; //no unbound opp found
+    	return rtn; //no unbound opp found
+    }
+    
+    //TODO make this private before submisting
+    public static String getOpp(String oppAndI) {
+    	int i = oppAndI.indexOf(",");
+    	if(oppAndI.equals(",")) return "";
+    	if(i<0) return"";
     	
+    	return oppAndI.substring(0, i);
+    }
+    //TODO make this private
+    public static int getIndex(String oi) {
+    	String subStr = oi.substring(oi.indexOf(",")+1, oi.length());
+    	return Integer.parseInt(subStr);
+    }
+    
+    //TODO make java docs
+    private static int getVar(String var, ArrayList<Variable> vars) {
+    	for(int i = 0 ; i <vars.size(); i++) {
+    		if (vars.get(i).name.equals( var)) return vars.get(i).value;
+    		
+    	}
+    	return -66666666;//hopefully this will set off some red flags 
+    }
+    
+    //TODO make this private 
+    public static boolean isArray(String str) {
+    	if(str.equals("")) return false;
+    	if(!Character.isLetter(str.charAt(0) ) ) return false;
+    	int i = 1;
+    	while(Character.isLetter(str.charAt(i) )) {
+    		i++;
+    	}
+    	char c = str.charAt(str.length()-1);
+    	if(str.charAt(i) =='['&& str.charAt(str.length()-1) ==']') return true;
+    	
+    	return false;
+    	
+    }
+    
+    //TODO make private
+    public static float getArray(String ary, ArrayList<Variable> vars, ArrayList<Array> arrays) {
+    	int split = ary.indexOf('[');
+    	String interior = ary.substring(split+1,ary.length()-1);
+    	String arrayName = ary.substring(0,split);
+    	
+    	for(int i = 0; i<arrays.size(); i++ ) {
+    		if (arrays.get(i).name == arrayName) {
+    			return arrays.get(i).values[(int)evaluate(interior,vars,arrays)];
+    		}
+    	}
+    	return -666666666;
     }
 }
