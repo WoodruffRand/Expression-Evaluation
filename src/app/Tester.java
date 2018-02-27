@@ -12,22 +12,21 @@ public class Tester {
 	public static void main(String [] args) {
 
 		testMakeVars();
-		testIndex();
-		testGetOpp();
-		testGetIndex();
-		testIsVar();
-		testIsArray();
+		//testIndex();
+		//testGetOpp();
+		//testGetIndex();
+		//testIsVar();
+		//testIsArray();
 		testEvaluateConsts();
 		try {
 			testVarsEvaluate();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("Tada! All tests passed.");
 	}
 	
-	
+	/*
 	
 	private static void testIsArray() {
 		assert(Expression.isArray("b[]") );
@@ -36,7 +35,7 @@ public class Tester {
 		assert(Expression.isArray("bmoo[3+1]") );
 		assert(Expression.isArray("bmoo[3+1/bmoo[9]]") );
 	}
-
+	 */
 
 
 	public static void testEvaluateConsts() {
@@ -62,7 +61,6 @@ public class Tester {
 			scfile = new Scanner(new File(fname));
 			Expression.loadVariableValues(scfile, vars, arrays);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -72,14 +70,22 @@ public class Tester {
 		assert(Expression.evaluate("3+a", vars, arrays)== 6 );
 		
 		assert(Expression.evaluate("3+B[2]", vars, arrays)== 4 );
-		assert(Expression.evaluate("B[A[0]+2]", vars, arrays)== 1 );
-		assert(Expression.evaluate("B[A[0]+a-1]", vars, arrays)== 1 );
-		assert(Expression.evaluate("B[A[0]+a-1]/10", vars, arrays)== (float)0.1 );
-		assert(Expression.evaluate("B[0]+A[0]", vars, arrays)== (float)0.0 );
+		assert(Expression.evaluate("B[A[0]+2]", vars, arrays)== 1 );//nested test
+		assert(Expression.evaluate("B[A[0]+a-1]", vars, arrays)== 1 );//nested test
+		assert(Expression.evaluate("B[A[0]+a-1]/10", vars, arrays)== (float)0.1 );//nested with outside opps
+		assert(Expression.evaluate("B[0]+A[0]", vars, arrays)== 0 );//side by side
+		assert(Expression.evaluate("B[(3+(a-2)/(b-1))/2]+A[B[(b-10)/(-4)]+1]", vars, arrays)== 4 );//side by side
+		assert(Expression.evaluate("B  [ (3 	+(	a	-2	 ) /		(  b -		  	1	) 	 	) 	 	/	  		2 ]	+ 		A [ 		 B  [(  	b	-1		0   )/( -4  )]	+1]", vars, arrays)== 4 );//now with white spaces!! 
+		//System.out.println(Expression.evaluate("(a + A[a*2-b])", vars, arrays) );//side by side
+		assert(Expression.evaluate("(a + A[a*2-b])", vars, arrays)== 8 );//Sesh
+		assert(Expression.evaluate("a - (b+A[B[2]])*d + 3", vars, arrays)== -106.0 );//Sesh
+		assert(Expression.evaluate("3*-2", vars, arrays)==-2);
+		
+		
 		
 	}
 	
-	
+	/*
 	public static void testIsVar() {
 		assert(Expression.isVar("X"));
 		assert(!Expression.isVar("4"));
@@ -132,6 +138,7 @@ public class Tester {
 		assert(oppandI.equals("+,1"));
 	}
 	
+	*/
 	public static void testMakeVars() {
 		testMakeVars("4*22-9/(8+20)", 0, 0);
 		testMakeVars("4*Miners[3+7]*22-9/(20)", 0 ,1);

@@ -23,6 +23,7 @@ public class Expression {
      */
     public static void 
     makeVariableLists(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
+    	expr = expr.replaceAll("\\s+","");//clean white spaces
     	Scanner sc = new Scanner(expr);
     	sc.useDelimiter("\\[|\\]|\\)|\\(|/|\\*|-|\\+");
     	
@@ -53,7 +54,7 @@ public class Expression {
     	return true;
     }
     
-    public static boolean isVar(String str) {
+    private static boolean isVar(String str) {
     	for(int i = 0; i < str.length(); i++) {
     		if( !Character.isLetter( str.charAt(i) ) ) {
     			return false;
@@ -112,6 +113,8 @@ public class Expression {
      */
     public static float 
     evaluate(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
+    	expr = expr.replaceAll("\\s+","");//ideally this would be in calling method but i don't have access
+    	if(expr.equals("")) return 0;
     	if(isVar(expr)) return getVar(expr,vars);
     	if(isArray(expr)) return getArray(expr, vars, arrays);
     	if(isNumber(expr)) return Integer.parseInt(expr);
@@ -129,8 +132,9 @@ public class Expression {
     	if(currOpp.equals("/")) return evaluate(lh,vars, arrays)/evaluate(rh,vars, arrays);
     	if(currOpp.equals("+")) return evaluate(lh,vars, arrays)+evaluate(rh,vars, arrays);
     	if(currOpp.equals("-")) return evaluate(lh,vars, arrays)-evaluate(rh,vars, arrays);
-    	return -666666666;
+    	return -666666666;//for debugging only, hopefully we never get here 
     }
+   
     /**
      * Searches string expression for lowest order unbound index
      * if no index found return empty string 
@@ -138,8 +142,7 @@ public class Expression {
      * @param exp The expression to be evaluated as a string
      * @return "operand,index"
      */
-    //TODO make this private before submitting
-    public static String opAndIndex(String exp) {
+    private static String opAndIndex(String exp) {
     	String rtn =",";
     	String opps = "+-*/";
     	for(int i =0 ; i<opps.length(); i++) {
@@ -153,21 +156,34 @@ public class Expression {
     	return rtn; //no unbound opp found
     }
     
-    //TODO make this private before submisting
-    public static String getOpp(String oppAndI) {
+    /**
+     * getOpp returns operand from operand index pair
+     * @param oppAndI pass in string with format "opp,index" e.g. "+,45"
+     * @return returns operand
+     */
+    private static String getOpp(String oppAndI) {
     	int i = oppAndI.indexOf(",");
     	if(oppAndI.equals(",")) return "";
     	if(i<0) return"";
     	
     	return oppAndI.substring(0, i);
     }
-    //TODO make this private
-    public static int getIndex(String oi) {
+    /**
+     * getIndex returns index from operand index pair
+     * @param oppAndI pass in string with format "opp,index" e.g. "+,45"
+     * @return returns index
+     */
+    private static int getIndex(String oi) {
     	String subStr = oi.substring(oi.indexOf(",")+1, oi.length());
     	return Integer.parseInt(subStr);
     }
     
-    //TODO make java docs
+    /**
+     * getVar returns predefined value of a string variable 
+     * @param var String containing var name
+     * @param vars Arraylist containing predefined vars
+     * @return value of provided var
+     */
     private static int getVar(String var, ArrayList<Variable> vars) {
     	for(int i = 0 ; i <vars.size(); i++) {
     		if (vars.get(i).name.equals( var)) return vars.get(i).value;
@@ -176,9 +192,15 @@ public class Expression {
     	return -66666666;//hopefully this will set off some red flags 
     }
     
-    //TODO make this private 
-    public static boolean isArray(String str) {
+    /**
+     * isArray returns true if provided string is an array 
+     * @param str String to be evaluated 
+     * @return true if it is an array, false otherwise
+     */
+    private  static boolean isArray(String str) {
     	if(str.equals("")) return false;
+    	String foo = opAndIndex(str);
+    	if(!opAndIndex(str).equals(",")) return false;
     	if(!Character.isLetter(str.charAt(0) ) ) return false;
     	int i = 1;
     	while(Character.isLetter(str.charAt(i) )) {
@@ -191,8 +213,14 @@ public class Expression {
     	
     }
     
-    //TODO make private
-    public static float getArray(String ary, ArrayList<Variable> vars, ArrayList<Array> arrays) {
+    /**
+     * getArray: Mutually recursive with Evaluate, matches array name and uses exaluate to determine index
+     * @param ary String containing array name
+     * @param vars arraylist of variable objects
+     * @param arrays arraylist of array objects
+     * @return value at array and index
+     */
+    private static float getArray(String ary, ArrayList<Variable> vars, ArrayList<Array> arrays) {
     	int split = ary.indexOf('[');
     	String interior = ary.substring(split+1,ary.length()-1);
     	String arrayName = ary.substring(0,split);
@@ -202,6 +230,6 @@ public class Expression {
     			return arrays.get(i).values[(int)evaluate(interior,vars,arrays)];
     		}
     	}
-    	return -666666666;
+    	return -666666666;//hopefull this raises some eyebrows 
     }
 }
