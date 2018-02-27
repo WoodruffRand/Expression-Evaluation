@@ -198,7 +198,7 @@ public class Expression {
     	String arrayName = ary.substring(0,split);
     	
     	for(int i = 0; i<arrays.size(); i++ ) {
-    		if (arrays.get(i).name == arrayName) {
+    		if (arrays.get(i).name.equals(arrayName)) {
     			return arrays.get(i).values[(int)evaluate(interior,vars,arrays)];
     		}
     	}

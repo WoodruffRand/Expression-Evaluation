@@ -24,6 +24,7 @@ public class Tester {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Tada! All tests passed.");
 	}
 	
 	
@@ -54,7 +55,7 @@ public class Tester {
 	public static void testVarsEvaluate() throws IOException {
 		ArrayList<Variable> vars = new ArrayList<>(); 
 		ArrayList<Array> arrays = new ArrayList<>();
-		Expression.makeVariableLists("a+b+d", vars, arrays);
+		Expression.makeVariableLists("A[4]+B[2]a+b+d", vars, arrays);
 		String fname = "etest1.txt";
 		Scanner scfile;
 		try {
@@ -69,6 +70,13 @@ public class Tester {
 		//System.out.println(Expression.evaluate("a+d+b", vars, arrays));
 		assert(Expression.evaluate("a+b+d", vars, arrays)== 61 );
 		assert(Expression.evaluate("3+a", vars, arrays)== 6 );
+		
+		assert(Expression.evaluate("3+B[2]", vars, arrays)== 4 );
+		assert(Expression.evaluate("B[A[0]+2]", vars, arrays)== 1 );
+		assert(Expression.evaluate("B[A[0]+a-1]", vars, arrays)== 1 );
+		assert(Expression.evaluate("B[A[0]+a-1]/10", vars, arrays)== (float)0.1 );
+		assert(Expression.evaluate("B[0]+A[0]", vars, arrays)== (float)0.0 );
+		
 	}
 	
 	
