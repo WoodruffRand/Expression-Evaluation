@@ -20,6 +20,8 @@ public class Tester {
 		testEvaluateConsts();
 		try {
 			testVarsEvaluate();
+			testVarsEvaluate2();//thank gerd
+			testVarsEvaluate3();// no suprizes here 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,6 +86,46 @@ public class Tester {
 		
 		
 	}
+	
+	
+	public static void testVarsEvaluate2() throws IOException {
+		ArrayList<Variable> vars = new ArrayList<>(); 
+		ArrayList<Array> arrays = new ArrayList<>();
+		Expression.makeVariableLists("B  [ (3 	+(	a	-2	 ) /		(  b -		  	1	) 	 	) 	 	/	  		2 ]	+ 		A [ 		 B  [(  	b	-1		0   )/( -4  )]	+1]", vars, arrays);
+		String fname = "etest1.txt";
+		Scanner scfile;
+		try {
+			scfile = new Scanner(new File(fname));
+			Expression.loadVariableValues(scfile, vars, arrays);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		assert(Expression.evaluate("B  [ (3 	+(	a	-2	 ) /		(  b -		  	1	) 	 	) 	 	/	  		2 ]	+ 		A [ 		 B  [(  	b	-1		0   )/( -4  )]	+1]", vars, arrays)== 4 );//now with white spaces!! 
+		
+		
+		
+	}
+	
+	public static void testVarsEvaluate3() throws IOException {
+		ArrayList<Variable> vars = new ArrayList<>(); 
+		ArrayList<Array> arrays = new ArrayList<>();
+		Expression.makeVariableLists("B[(3+(a-2)/(b-1))/2]+A[B[(b-10)/(-4)]+1]", vars, arrays);
+		String fname = "etest1.txt";
+		Scanner scfile;
+		try {
+			scfile = new Scanner(new File(fname));
+			Expression.loadVariableValues(scfile, vars, arrays);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		assert(Expression.evaluate("B[(3+(a-2)/(b-1))/2]+A[B[(b-10)/(-4)]+1]", vars, arrays)== 4 );//now with white spaces!! 
+		
+		
+		
+	}
+
 	
 	/*
 	public static void testIsVar() {
